@@ -12,6 +12,8 @@ For this assignment it's necessary to have a working webserver with PHP support.
 
 For this assignment you need to implement a LTV (Life Time Value) report. To create this report you need to alter [index.php](assignment1/index.php) in a way you have the most optimial solution to calculate the report. Try to write as least as possible SQL queries by smartly loop through data.
 
+The report should be made in a way it is easy to run the report for 3, 12 or 18 months. This could be done in the code by using variables. Bonus points if you use a form to say which period and commission should be used.
+
 **What is a LTV Report?**
 
 A LTV report gives a grouped overview of booking counts and turnover for a specific period and the start of those periods. What the report shows is when a booker had their first booking in a specific month, how many bookings and how much turnover the booker generates on average for a specific period (duration).
