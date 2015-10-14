@@ -30,7 +30,7 @@ Let's illustrate this with an example (with a period of 18 months and a commissi
 | Sep 2013   | 57       | 15.3                | 1139.70        | 113.97 |
 | ...        |          |                     |                |        |
 
-This reports shows that 145 bookers had their first booking in August 2013, in 18 months they made an average of 10.6 bookings and with an average turnover of 375.04 euro. If we get a commission of 10% of this turnover that means that over a period of 18 months we make an average of 37.50 per booker. So for August 2013, with a life time of 18 months, bookers have a LTV of 37.50 euro.
+This report shows that 145 bookers had their first booking in August 2013, in 18 months they made an average of 10.6 bookings and with an average turnover of 375.04 euro. If we get a commission of 10% of this turnover that means that over a period of 18 months we make an average of 37.50 per booker. So for August 2013, with a life time of 18 months, bookers have a LTV of 37.50 euro.
 
 **Side notes**
 
