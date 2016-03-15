@@ -1,0 +1,31 @@
+{% extends './base.html' %}
+{% block body %}
+
+<div class="starter-template col-xs-6 col-xs-offset-3">
+      {% if error %}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+      {% endif %}
+      <h1>Result</h1>
+      <hr>
+      <table class="table table-bordered">
+            <thead>
+                  <tr>
+                        <th>Date</th>
+                        <th># of bookers</th>
+                        <th># of bookings (Avg)</th>
+                        <th>Turnover (Avg)</th>
+                        <th>LTV</th>
+                  </tr>
+            </thead>
+            <tbody> 
+                  <tr> 
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>11</td>
+                  </tr> 
+            </tbody>
+      </table>
+</div>
+{% endblock %}

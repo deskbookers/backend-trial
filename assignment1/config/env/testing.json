@@ -1,0 +1,7 @@
+{
+	"express": {
+		"port": 8080,
+		"templateDir":"./templates",
+		"staticDir":"./public"
+	}
+}
