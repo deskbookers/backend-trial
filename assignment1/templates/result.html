@@ -18,13 +18,15 @@
                   </tr>
             </thead>
             <tbody> 
-                  <tr> 
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>11</td>
+                  {% for result in ltvReports %}
+                  <tr>
+                        <th scope="row">{{result.date}}</th>
+                        <td>{{result.numberOfBookers}}</td>
+                        <td>{{result.averageBookings}}</td>
+                        <td>{{result.averageTurnover}}</td>
+                        <td>{{result.lifeTimeValue}}</td>
                   </tr> 
+                  {% endfor %}
             </tbody>
       </table>
 </div>

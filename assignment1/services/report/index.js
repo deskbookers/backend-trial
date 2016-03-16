@@ -3,7 +3,9 @@ var tv4 = require('tv4');
 var reportSchema = require('./schemas/report.json');
 module.exports = function ReportingModule(config) {
 	var virgilio = this;
-	var reporting = virgilio.namespace$('report');
+	var report = virgilio.namespace$('report');
+	virgilio.loadModule$(require('./actions'));
+	virgilio.loadModule$(require('./model'));
 
 	virgilio.express.router.get('/', function handleRequest(req, res) {
 		res.render('index', {});
@@ -15,8 +17,12 @@ module.exports = function ReportingModule(config) {
 			return res.render('index', {error:'Validation failed, duration must be a positive whole number.'});
 		}
 
-		console.log(req.body);
-
-		res.render('result', {});
+		report.actions.generateLTVForDuration(req.body.duration)
+			.then(function showResult(result) {
+				res.render('result', {ltvReports:result});
+			})
+			.catch(function handleErr(err) {
+				
+			});
 	});
 }
