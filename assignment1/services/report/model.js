@@ -1,6 +1,7 @@
 "use strict";
 var _ = require('lodash');
 var moment = require('moment');
+
 module.exports = function ReportModel(config) {
 	var INTEREST = config.report.interest;
 	var virgilio = this;
@@ -13,6 +14,9 @@ module.exports = function ReportModel(config) {
 			.then(calculateInterest);
 	});
 
+	/*
+		Helper functions
+	*/
 	function calculateInterest(aggregatedBookings) {
 		return aggregatedBookings.map(function calculateInterest(bookings) {
 			bookings.averageBookings = bookings.numberOfBookings / bookings.numberOfBookers;
@@ -92,9 +96,26 @@ module.exports = function ReportModel(config) {
 
 	function getBookingsBetween(startTimestamp, endTimestamp) {
 		return new virgilio.Promise(function getBookings(reject, resolve) {
-			var query = 'SELECT * FROM (SELECT b.booker_id, count(locked_total_price) as number_of_bookings, sum(locked_total_price) as total_turnover, min(end_timestamp) as first_booking FROM bookingitems bi JOIN bookings b ON (bi.booking_id = b.id) GROUP BY b.booker_id) WHERE first_booking > $startTimestamp and first_booking < $endTimestamp ORDER BY first_booking asc';
+			var query = '\
+			SELECT * FROM \
+					(\
+						SELECT\
+							b.booker_id,\
+							count(locked_total_price) as number_of_bookings, \
+							sum(locked_total_price) as total_turnover, \
+							min(end_timestamp) as first_booking \
+						FROM bookingitems bi \
+						JOIN bookings b \
+						ON (bi.booking_id = b.id) \
+						GROUP BY b.booker_id \
+					) \
+				WHERE \
+					first_booking > $startTimestamp and \
+					first_booking < $endTimestamp \
+				ORDER BY first_booking asc';
+
 			var params = {$startTimestamp: startTimestamp, $endTimestamp: endTimestamp};
-			
+
 			virgilio.db.all(query, params, function returnRowsOrRejectErr(rows, err){
 				if(err) return reject(err);
 				resolve(rows);

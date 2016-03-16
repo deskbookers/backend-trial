@@ -8,6 +8,8 @@ module.exports = function ReportActions(config) {
 		var now = moment().unix();
 		var startDate = moment().subtract(duration, 'months').unix();
 
+		actions.log$.info('Requesting an LTV report for timerange:', startDate, now, 'which cover the duration of', duration, 'months.');
+
 		return actions.model.getLTVBetweenTimestamp(startDate, now)
 			.then(roundToDecimalPlaces);
 	});

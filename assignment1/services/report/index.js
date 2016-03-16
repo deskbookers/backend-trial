@@ -22,7 +22,8 @@ module.exports = function ReportingModule(config) {
 				res.render('result', {ltvReports:result});
 			})
 			.catch(function handleErr(err) {
-				
+				report.log$.error('error while rendering results:', err);
+				res.render('index', {error: err.title});
 			});
 	});
 }
