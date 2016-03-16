@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -14,11 +14,8 @@ module.exports = function ReportModel(config) {
 			.then(calculateInterest);
 	});
 
-	/*
-		Helper functions
-	*/
 	function calculateInterest(aggregatedBookings) {
-		return aggregatedBookings.map(function calculateInterest(bookings) {
+		return aggregatedBookings.map(function calculateAvgAndInterest(bookings) {
 			bookings.averageBookings = bookings.numberOfBookings / bookings.numberOfBookers;
 			bookings.averageTurnover = bookings.totalTurnover / bookings.numberOfBookings;
 			bookings.lifeTimeValue = bookings.averageTurnover * INTEREST;
@@ -81,16 +78,16 @@ module.exports = function ReportModel(config) {
 		
 		rows.forEach(function aggregateRows(row){
 			var groupKey = moment.unix(row.first_booking).format('YYYY-MM');
-			
-			if(!_.has(aggregatedResult, groupKey)) {
-				aggregatedResult[groupKey] = {numberOfBookings: 0, totalTurnover: 0, numberOfBookers: 0};
+
+			if (!_.has(aggregatedResult, groupKey)) {
+				aggregatedResult[groupKey] = { numberOfBookings: 0, totalTurnover: 0, numberOfBookers: 0 };
 			}
 
 			aggregatedResult[groupKey].numberOfBookers += 1;
 			aggregatedResult[groupKey].totalTurnover += row.total_turnover;
 			aggregatedResult[groupKey].numberOfBookings += row.number_of_bookings;
 		});
-		
+
 		return aggregatedResult;
 	}
 
@@ -114,12 +111,12 @@ module.exports = function ReportModel(config) {
 					first_booking < $endTimestamp \
 				ORDER BY first_booking asc';
 
-			var params = {$startTimestamp: startTimestamp, $endTimestamp: endTimestamp};
+			var params = { $startTimestamp: startTimestamp, $endTimestamp: endTimestamp };
 
 			virgilio.db.all(query, params, function returnRowsOrRejectErr(rows, err){
-				if(err) return reject(err);
+				if (err) return reject(err);
 				resolve(rows);
 			});
 		});
 	}
-}
+};
