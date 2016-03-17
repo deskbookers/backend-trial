@@ -23,5 +23,7 @@ module.exports = function ExpressModule(config) {
 		return app;
 	}
 
+	//let {port, templateDir, staticDir} = config.express with es6 could be cleaner
 	express.router = runAndConfigureExpress(config.express.port, config.express.templateDir, config.express.staticDir);
+	express.log$.info('Express up and running on port', config.express.port);
 }

@@ -9,4 +9,6 @@ module.exports = function DbModule(config) {
 	connector.all = function(query, params, callback) {
 		db.all(query, params, callback);
 	};
+
+	connector.log$.info('Connected to Db.');
 }

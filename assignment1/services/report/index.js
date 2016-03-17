@@ -14,13 +14,20 @@ module.exports = function ReportingModule() {
 	});
 
 	virgilio.express.router.post('/report', function handleRequest(req, res) {
-		if (req.body && req.body.duration) req.body.duration = parseInt(req.body.duration);
+		/*
+			note: if there would be more requests i would create
+			a middleware generator with the reveal module pattern
+			in order to use like this:
+			var validator = virgilio.helpers.createValidationModule(reportSchema); //returns a middleware
+			virgilio.express.router.post('/report', validator , function handleReq(req, res) {});
+		*/
 		if (!tv4.validate(req.body, reportSchema)) {
 			return res.render('index', 
 				{ error: 'Validation failed, duration must be a positive whole number.' });
 		}
 
-		report.actions.generateLTVForDuration(req.body.duration)
+		var duration = parseInt(req.body.duration);
+		report.actions.generateLTVForDuration(duration)
 			.then(function showResult(result) {
 				res.render('result', { ltvReports: result });
 			})
