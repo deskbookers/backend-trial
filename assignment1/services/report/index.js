@@ -6,6 +6,7 @@ module.exports = function ReportingModule() {
 	var virgilio = this;
 	var report = virgilio.namespace$('report');
 	
+	virgilio.loadModule$(require('./errors'));
 	virgilio.loadModule$(require('./actions'));
 	virgilio.loadModule$(require('./model'));
 
@@ -31,9 +32,12 @@ module.exports = function ReportingModule() {
 			.then(function showResult(result) {
 				res.render('result', { ltvReports: result });
 			})
-			.catch(function handleErr(err) {
-				report.log$.error('error while rendering results:', err);
-				res.render('index', { error: err.title });
+			.catch(virgilio.report.error.filterDisplayableError, function displayError(err) {
+				res.render('index', { error: err.message });
+			})
+			.catch(function handleUnexpectedErr(err) {
+				report.log$.error('unexpected error:', err);
+				res.render('index', { error: 'Unexpected error happened.' });
 			});
 	});
 };

@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var moment = require('moment');
+var squel = require('squel');
 
 module.exports = function ReportModel(config) {
 	var INTEREST = config.report.interest;
@@ -92,31 +93,24 @@ module.exports = function ReportModel(config) {
 	}
 
 	function getBookingsBetween(startTimestamp, endTimestamp) {
-		return new virgilio.Promise(function getBookings(reject, resolve) {
-			var query = '\
-			SELECT * FROM \
-					(\
-						SELECT\
-							b.booker_id,\
-							count(locked_total_price) as number_of_bookings, \
-							sum(locked_total_price) as total_turnover, \
-							min(end_timestamp) as first_booking \
-						FROM bookingitems bi \
-						JOIN bookings b \
-						ON (bi.booking_id = b.id) \
-						GROUP BY b.booker_id \
-					) \
-				WHERE \
-					first_booking > $startTimestamp and \
-					first_booking < $endTimestamp \
-				ORDER BY first_booking asc';
+		var subQuery = squel.select()
+						.from('bookingitems', 'bi')
+						.field('b.booker_id')
+						.field('count(locked_total_price)', 'number_of_bookings')
+						.field('sum(locked_total_price)', 'total_turnover')
+						.field('min(end_timestamp)', 'first_booking')
+						.join('bookings', 'b', 'bi.booking_id = b.id')
+						.group('b.booker_id');
 
-			var params = { $startTimestamp: startTimestamp, $endTimestamp: endTimestamp };
+		var query = squel.select()
+						.from(subQuery)
+						.where('first_booking > ?', startTimestamp)
+						.where('first_booking < ?', endTimestamp)
+						.order('first_booking', true); //true === asc
 
-			virgilio.db.all(query, params, function returnRowsOrRejectErr(rows, err){
-				if (err) return reject(err);
-				resolve(rows);
+		return new virgilio.db.getAllRows(query.toParam())
+			.tap(function checkIfResultIsNotEmpty(result) {
+				if (!result.length) throw new virgilio.report.error.noBookingsFoundError();
 			});
-		});
 	}
 };
