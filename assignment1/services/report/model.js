@@ -8,21 +8,13 @@ module.exports = function ReportModel(config) {
 	var virgilio = this;
 	var model = virgilio.namespace$('report.model');
 
-	model.defineAction$(function getLTVBetweenTimestamp(startTimestamp, endTimestamp) {
-		return getBookingsBetween(startTimestamp, endTimestamp)
-			.then(aggregateResults)
-			.then(convertToArray)
-			.then(calculateInterest);
-	});
 
-	function calculateInterest(aggregatedBookings) {
-		return aggregatedBookings.map(function calculateAvgAndInterest(bookings) {
-			bookings.averageBookings = bookings.numberOfBookings / bookings.numberOfBookers;
-			bookings.averageTurnover = bookings.totalTurnover / bookings.numberOfBookings;
-			bookings.lifeTimeValue = bookings.averageTurnover * INTEREST;
-			return bookings;
-		});
-	}
+	model.calculateAvgAndInterest = function calculateAvgAndInterest(bookings) {
+		bookings.averageBookings = bookings.numberOfBookings / bookings.numberOfBookers;
+		bookings.averageTurnover = bookings.totalTurnover / bookings.numberOfBookings;
+		bookings.lifeTimeValue = bookings.averageTurnover * INTEREST;
+		return bookings;
+	};
 
 	/*
 		Convert to array
@@ -42,7 +34,7 @@ module.exports = function ReportModel(config) {
 			}]
 		]
 	*/
-	function convertToArray(aggregatedBookings) {
+	model.defineAction$(function convertToArray(aggregatedBookings) {
 		var ret = [];
 		var groupKeys = _.sortBy(_.keys(aggregatedBookings));
 
@@ -56,7 +48,7 @@ module.exports = function ReportModel(config) {
 		});
 
 		return ret;
-	}
+	});
 
 	/*
 		Aggregate results
@@ -74,25 +66,25 @@ module.exports = function ReportModel(config) {
 			}...
 		}
 	*/
-	function aggregateResults(rows) {
+	model.defineAction$(function aggregateBookings(bookings) {
 		var aggregatedResult = {};
 		
-		rows.forEach(function aggregateRows(row){
-			var groupKey = moment.unix(row.first_booking).format('YYYY-MM');
+		bookings.forEach(function aggregateRows(booking){
+			var groupKey = moment.unix(booking.first_booking).format('YYYY-MM');
 
 			if (!_.has(aggregatedResult, groupKey)) {
 				aggregatedResult[groupKey] = { numberOfBookings: 0, totalTurnover: 0, numberOfBookers: 0 };
 			}
 
 			aggregatedResult[groupKey].numberOfBookers += 1;
-			aggregatedResult[groupKey].totalTurnover += row.total_turnover;
-			aggregatedResult[groupKey].numberOfBookings += row.number_of_bookings;
+			aggregatedResult[groupKey].totalTurnover += booking.total_turnover;
+			aggregatedResult[groupKey].numberOfBookings += booking.number_of_bookings;
 		});
 
 		return aggregatedResult;
-	}
+	});
 
-	function getBookingsBetween(startTimestamp, endTimestamp) {
+	model.defineAction$(function getBookingsBetween(startTimestamp, endTimestamp) {
 		var subQuery = squel.select()
 						.from('bookingitems', 'bi')
 						.field('b.booker_id')
@@ -108,9 +100,6 @@ module.exports = function ReportModel(config) {
 						.where('first_booking < ?', endTimestamp)
 						.order('first_booking', true); //true === asc
 
-		return new virgilio.db.getAllRows(query.toParam())
-			.tap(function checkIfResultIsNotEmpty(result) {
-				if (!result.length) throw new virgilio.report.error.noBookingsFoundError();
-			});
-	}
+		return new virgilio.db.getAllRows(query.toParam());
+	});
 };

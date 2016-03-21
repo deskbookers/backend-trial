@@ -4,8 +4,9 @@
   "description": "Little app to get lifetime records from an SQLite b.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js | bunyan",
+    "test": "mocha ./tests/**/*.js",
+    "install-dev": "sudo npm i -g bunyan mocha"
   },
   "author": "Daniel Gulyas (hello@danielgulyas.me)",
   "license": "WTFPL",
@@ -20,5 +21,9 @@
     "swig": "^1.4.2",
     "tv4": "^1.2.7",
     "virgilio": "^0.12.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.2.2"
   }
 }

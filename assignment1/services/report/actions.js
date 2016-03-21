@@ -5,22 +5,27 @@ module.exports = function ReportActions() {
 	var moment = require('moment');
 
 	actions.defineAction$(function generateLTVForDuration(duration) {
-		var now = moment().unix();
-		var startDate = moment().subtract(duration, 'months').unix();
+		var startTimestamp = moment().subtract(duration, 'months').unix();
+		var endTimestamp = moment().unix();
 
-		actions.log$.info('Requesting an LTV report for timerange:', startDate, now, 
+		actions.log$.info('Requesting an LTV report for timerange:', startTimestamp, endTimestamp,
 			'which cover the duration of', duration, 'months.');
 
-		return actions.model.getLTVBetweenTimestamp(startDate, now)
-			.then(roundToDecimalPlaces);
+		return actions.model.getBookingsBetween(startTimestamp, endTimestamp)
+			.tap(function checkIfResultIsNotEmpty(result) {
+				if (!result.length) throw new virgilio.report.error.noBookingsFoundError();
+			})
+			.then(actions.model.aggregateBookings)
+			.then(actions.model.convertToArray)
+			.map(actions.model.calculateAvgAndInterest)
+			.tap(function(a){console.log(a)})
+			.map(roundToTwoDecimalPlaces);
 	});
 
-	function roundToDecimalPlaces(ltvReports) {
-		return ltvReports.map(function convertDecimalPlaces(report) {
-			report.lifeTimeValue = report.lifeTimeValue.toFixed(2);
-			report.averageTurnover = report.averageTurnover.toFixed(2);
-			report.averageBookings = report.averageBookings.toFixed(2);
-			return report;
-		});
+	function roundToTwoDecimalPlaces(report) {
+		report.lifeTimeValue = report.lifeTimeValue.toFixed(2);
+		report.averageTurnover = report.averageTurnover.toFixed(2);
+		report.averageBookings = report.averageBookings.toFixed(2);
+		return report;
 	};
 }
