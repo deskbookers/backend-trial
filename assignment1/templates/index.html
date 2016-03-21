@@ -1,0 +1,24 @@
+{% extends './base.html' %}
+{% block body %}
+
+<div class="starter-template col-xs-6 col-xs-offset-3">
+      {% if error %}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+      {% endif %}
+      <h1>Please enter the details</h1>
+      <hr>
+      <form class="form-horizontal" action="/report" method="post">
+            <div class="form-group">
+                  <label for="inputDuration" class="col-sm-2 control-label">Duration</label>
+                  <div class="col-sm-10">
+                        <input type="number" class="form-control" id="inputDuration" name="duration" placeholder="Duration, ex:18">
+                  </div>
+            </div>
+            <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Run</button>
+                  </div>
+            </div>
+      </form>
+</div>
+{% endblock %}

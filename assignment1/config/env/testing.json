@@ -1,0 +1,10 @@
+{
+	"express": {
+		"port": 8080,
+		"templateDir":"./templates",
+		"staticDir":"./public"
+	},
+	"report": {
+		"interest": 0.1
+	}
+}

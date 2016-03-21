@@ -1,0 +1,33 @@
+{% extends './base.html' %}
+{% block body %}
+
+<div class="starter-template col-xs-8 col-xs-offset-2">
+      {% if error %}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+      {% endif %}
+      <h1>Result</h1>
+      <hr>
+      <table class="table table-bordered">
+            <thead>
+                  <tr>
+                        <th>Date</th>
+                        <th># of bookers</th>
+                        <th># of bookings (Avg)</th>
+                        <th>Turnover (Avg)</th>
+                        <th>LTV</th>
+                  </tr>
+            </thead>
+            <tbody> 
+                  {% for result in ltvReports %}
+                  <tr>
+                        <th scope="row">{{result.date}}</th>
+                        <td>{{result.numberOfBookers}}</td>
+                        <td>{{result.averageBookings}}</td>
+                        <td>{{result.averageTurnover}}</td>
+                        <td>{{result.lifeTimeValue}}</td>
+                  </tr> 
+                  {% endfor %}
+            </tbody>
+      </table>
+</div>
+{% endblock %}

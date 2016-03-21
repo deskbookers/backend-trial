@@ -1,0 +1,29 @@
+{
+  "name": "deskbookers-backend",
+  "version": "1.0.0",
+  "description": "Little app to get lifetime records from an SQLite b.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js | bunyan",
+    "test": "mocha ./tests/**/*.js",
+    "install-dev": "sudo npm i -g bunyan mocha"
+  },
+  "author": "Daniel Gulyas (hello@danielgulyas.me)",
+  "license": "WTFPL",
+  "dependencies": {
+    "bluebird": "^3.3.4",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "lodash": "^4.6.1",
+    "moment": "^2.12.0",
+    "sqlite3": "^3.1.1",
+    "squel": "^4.4.1",
+    "swig": "^1.4.2",
+    "tv4": "^1.2.7",
+    "virgilio": "^0.12.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.2.2"
+  }
+}

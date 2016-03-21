@@ -1,0 +1,14 @@
+{
+	"title": "Validation of LTV report request",
+	"type": "object",
+	"properties": {
+		"duration": {
+			"type": "string",
+			"maxLength":2,
+			"minLength":1,
+			"pattern":"^[0-9]*$"
+		}
+	},
+	"required": ["duration"],
+	"additionalProperties": false
+}
