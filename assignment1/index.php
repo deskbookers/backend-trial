@@ -9,6 +9,7 @@ $period = 6; // Life-Time of 12 months
 $commission = 0.10; // 10% commission
 
 // Prepare query
+// This query returns the following results: the booker id, a month specified by a year-month format, the amount of bookings for that month by that booker and the total turnover for that month by that booker.
 //TODO filter out turnover from booked products, as only booked spaces should count towards the LTV
 $db_result = $db
     ->prepare('
@@ -21,8 +22,9 @@ $db_result = $db
 	')
     ->run();
 
-$array = array();
 
+// Filter out bookings in months beyond the LTV period and put the results in an array
+$array = array();
 foreach ($db_result as $index => $row) {
     $month_counter = 0;
 
@@ -35,7 +37,7 @@ foreach ($db_result as $index => $row) {
     $next_row = $db_result->fetch();
 
     while ($row->booker == $next_row->booker) {
-        // Aggregate the data of this booker if it is still in the Life Time period, else skip
+        // Aggregate the data of this booker if it is still in the Life Time Value period, else skip
         if ($month_counter < $period) {
             $array[$index]["booking_count"] += $next_row->booking_count;
             $array[$index]["turnover"] += $next_row->turnover;
@@ -48,7 +50,7 @@ foreach ($db_result as $index => $row) {
     $row = $next_row;
 }
 
-
+// Sort the array by month
 usort($array, function ($a, $b) {
     $a = $a['year_month'];
     $b = $b['year_month'];
@@ -61,9 +63,11 @@ usort($array, function ($a, $b) {
     }
 });
 
+
+// Group the bookers from the same month together
+// The result is an array with the booking counts and turnover per month (and all within the LTV period of the bookers that made the bookings/turnover)
 $grouped_array = array();
 array_push($grouped_array, $array[0]);
-
 foreach ($array as $value) {
     if ($value["year_month"] != $grouped_array[count($grouped_array) - 1]["year_month"]) {
         array_push($grouped_array, $value);
@@ -78,9 +82,7 @@ foreach ($array as $value) {
             $grouped_array[count($grouped_array) - 1]["booker_count"] = 1;
         }
     }
-}
-
-?>
+}?>
 
 <!doctype html>
 <html>
